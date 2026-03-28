@@ -13,20 +13,23 @@ env:
 jobs:
   # ── Native build + unit tests ─────────────────────────────────────────
   native:
-    name: "Native (Ubuntu) — Build & Test"
+    name: "Native (Fedora) — Build & Test"
     runs-on: ubuntu-24.04
+    container:
+      image: fedora:42
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y \
+          dnf install -y \
+            git \
+            gcc gcc-c++ make \
             cmake ninja-build \
             meson \
-            portaudio19-dev \
-            pkg-config
+            portaudio-devel \
+            pkgconf-pkg-config
 
       - name: "CMake: Configure"
         run: cmake --preset native

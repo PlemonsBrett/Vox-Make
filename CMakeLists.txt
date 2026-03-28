@@ -30,9 +30,12 @@ add_compile_options(
 )
 
 # Embedded-specific: no exceptions, no RTTI, minimize binary size
+# -fno-exceptions / -fno-rtti are C++-only; applying them to C sources trips -Werror on GCC.
 if(NOT TARGET_PLATFORM STREQUAL "native")
     add_compile_options(
-        -fno-exceptions -fno-rtti -fno-unwind-tables
+        "$<$<COMPILE_LANGUAGE:CXX>:-fno-exceptions>"
+        "$<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>"
+        -fno-unwind-tables
         -ffunction-sections -fdata-sections
         -Os
     )

@@ -16,6 +16,7 @@ from typing import TYPE_CHECKING
 
 import click
 import numpy as np
+from scipy.io import wavfile
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray
@@ -62,7 +63,6 @@ def generate_chirp(
 
 def write_wav(path: Path, samples: NDArray[np.int16], sample_rate: int = 16000) -> None:
     """Write 16-bit mono PCM WAV file."""
-    from scipy.io import wavfile
 
     wavfile.write(str(path), sample_rate, samples)
 

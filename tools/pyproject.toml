@@ -73,5 +73,5 @@ markers = [
 ]
 addopts = "-x --tb=short -q"
 
-[tool.ty]
+[tool.ty.environment]
 python-version = "3.12"
