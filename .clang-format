@@ -1,0 +1,56 @@
+# .clang-format — project-wide C/C++ formatting
+# Style: LLVM-based with embedded-friendly tweaks
+#
+# Apply: clang-format -i src/**/*.c src/**/*.cpp include/**/*.h
+# Check: clang-format --dry-run --Werror src/**/*.c
+
+---
+Language: Cpp
+BasedOnStyle: LLVM
+
+# ── Indentation ────────────────────────────────────────────────────────
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+IndentCaseLabels: true
+IndentPPDirectives: AfterHash
+NamespaceIndentation: None
+
+# ── Braces ─────────────────────────────────────────────────────────────
+BreakBeforeBraces: Attach
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+# ── Line width ─────────────────────────────────────────────────────────
+ColumnLimit: 100
+
+# ── Alignment ──────────────────────────────────────────────────────────
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignTrailingComments: true
+
+# ── Includes ───────────────────────────────────────────────────────────
+SortIncludes: CaseSensitive
+IncludeBlocks: Regroup
+IncludeCategories:
+  # Project headers first
+  - Regex: '^"(core|app|platform)/'
+    Priority: 1
+  # Third-party headers
+  - Regex: '^"'
+    Priority: 2
+  # System headers last
+  - Regex: '^<'
+    Priority: 3
+
+# ── Pointer/Reference alignment ───────────────────────────────────────
+PointerAlignment: Left      # int* p, not int *p
+
+# ── Misc ───────────────────────────────────────────────────────────────
+SpaceAfterCStyleCast: true
+SpaceBeforeParens: ControlStatements
+MaxEmptyLinesToKeep: 1
+InsertBraces: true          # enforce braces on single-line if/for/while
+...

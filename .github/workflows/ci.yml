@@ -1,0 +1,119 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  # Pin tool versions for reproducibility
+  ARM_GCC_VERSION: "13.2.rel1"
+
+jobs:
+  # ── Native build + unit tests ─────────────────────────────────────────
+  native:
+    name: "Native (Ubuntu) — Build & Test"
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake ninja-build \
+            meson \
+            portaudio19-dev \
+            pkg-config
+
+      - name: "CMake: Configure"
+        run: cmake --preset native
+
+      - name: "CMake: Build"
+        run: cmake --build --preset native
+
+      - name: "CMake: Test"
+        run: ctest --preset native
+
+      # Meson build (parallel, for comparison / parity check)
+      - name: "Meson: Setup"
+        run: meson setup build-meson --native-file meson/native.ini
+
+      - name: "Meson: Build"
+        run: meson compile -C build-meson
+
+      - name: "Meson: Test"
+        run: meson test -C build-meson
+
+  # ── QEMU cross-build + emulated test ──────────────────────────────────
+  qemu:
+    name: "QEMU Cortex-M4 — Cross-Build"
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install ARM toolchain + QEMU
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake ninja-build \
+            gcc-arm-none-eabi \
+            libnewlib-arm-none-eabi \
+            qemu-system-arm
+
+      - name: "CMake: Configure (QEMU)"
+        run: cmake --preset qemu
+
+      - name: "CMake: Build (QEMU)"
+        run: cmake --build --preset qemu
+
+      - name: "Binary size report"
+        run: |
+          arm-none-eabi-size build/qemu/vox-make
+          echo "---"
+          arm-none-eabi-objdump -h build/qemu/vox-make | head -30
+
+      # TODO: when QEMU audio HAL is implemented, run integration tests:
+      # - name: "Run on QEMU"
+      #   run: |
+      #     timeout 10 qemu-system-arm \
+      #       -machine lm3s6965evb \
+      #       -semihosting \
+      #       -nographic \
+      #       -kernel build/qemu/vox-make
+
+  # ── Python tooling ────────────────────────────────────────────────────
+  python-tools:
+    name: "Python Tools — Lint & Test"
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: "Install dependencies"
+        working-directory: tools
+        run: uv sync --all-extras
+
+      - name: "Ruff: lint"
+        working-directory: tools
+        run: uv run ruff check .
+
+      - name: "Ruff: format check"
+        working-directory: tools
+        run: uv run ruff format --check .
+
+      - name: "ty: type check"
+        working-directory: tools
+        run: uv run ty check
+
+      - name: "Pytest"
+        working-directory: tools
+        run: uv run pytest --cov=tools --cov-report=term-missing

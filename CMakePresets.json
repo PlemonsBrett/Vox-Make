@@ -1,0 +1,76 @@
+{
+    "version": 6,
+    "configurePresets": [
+        {
+            "name": "native",
+            "displayName": "Native (Desktop)",
+            "description": "Build for host machine — day-to-day development & TDD",
+            "binaryDir": "${sourceDir}/build/native",
+            "cacheVariables": {
+                "TARGET_PLATFORM": "native",
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+            }
+        },
+        {
+            "name": "native-release",
+            "displayName": "Native (Release)",
+            "inherits": "native",
+            "binaryDir": "${sourceDir}/build/native-release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "qemu",
+            "displayName": "QEMU Cortex-M4",
+            "description": "ARM Cortex-M4 build for QEMU emulation — CI target",
+            "binaryDir": "${sourceDir}/build/qemu",
+            "toolchainFile": "${sourceDir}/cmake/arm-none-eabi.cmake",
+            "cacheVariables": {
+                "TARGET_PLATFORM": "qemu",
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "stm32f4",
+            "displayName": "STM32F4 Hardware",
+            "description": "Real STM32F4 hardware target",
+            "binaryDir": "${sourceDir}/build/stm32f4",
+            "toolchainFile": "${sourceDir}/cmake/arm-none-eabi.cmake",
+            "cacheVariables": {
+                "TARGET_PLATFORM": "stm32f4",
+                "CMAKE_BUILD_TYPE": "Release",
+                "CPU_FREQ_HZ": "168000000"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "native",
+            "configurePreset": "native"
+        },
+        {
+            "name": "native-release",
+            "configurePreset": "native-release"
+        },
+        {
+            "name": "qemu",
+            "configurePreset": "qemu"
+        },
+        {
+            "name": "stm32f4",
+            "configurePreset": "stm32f4"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "native",
+            "configurePreset": "native",
+            "output": {
+                "outputOnFailure": true,
+                "verbosity": "verbose"
+            }
+        }
+    ]
+}

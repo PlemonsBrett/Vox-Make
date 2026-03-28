@@ -1,0 +1,6 @@
+option('target_platform',
+    type: 'combo',
+    choices: ['native', 'qemu', 'stm32f4'],
+    value: 'native',
+    description: 'Build target platform',
+)

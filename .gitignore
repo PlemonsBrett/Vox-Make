@@ -1,0 +1,55 @@
+# ── Build outputs ──────────────────────────────────────────────────────
+build/
+build-*/
+builddir/
+
+# ── CMake ──────────────────────────────────────────────────────────────
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+*.cmake
+!cmake/arm-none-eabi.cmake
+
+# ── Meson ──────────────────────────────────────────────────────────────
+subprojects/*
+!subprojects/*.wrap
+
+# ── Compiled objects ───────────────────────────────────────────────────
+*.o
+*.a
+*.so
+*.dylib
+*.elf
+*.bin
+*.hex
+*.map
+
+# ── IDE ────────────────────────────────────────────────────────────────
+.vscode/
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+.cache/
+
+# ── Python ─────────────────────────────────────────────────────────────
+tools/.venv/
+tools/__pycache__/
+tools/**/__pycache__/
+tools/*.egg-info/
+tools/dist/
+tools/.ruff_cache/
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+uv.lock
+
+# ── OS ─────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Test artifacts ─────────────────────────────────────────────────────
+tests/fixtures/*.generated.*
